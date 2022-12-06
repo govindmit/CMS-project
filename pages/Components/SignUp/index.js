@@ -37,7 +37,7 @@ const Signup = () => {
     
     const getallroles = async () => {
         await UserService.getAllRole().then((roleData) => {
-            setRole(roleData?.data[0].id)
+            // setRole(roleData?.data[0].id)
             setRoleArray(roleData?.data)
         })
     }
@@ -54,6 +54,7 @@ const Signup = () => {
             phone: phone,
             role: role
         }
+        console.log(role)
 
         await UserService.addUser(data).then(res => {
             console.log(res)
@@ -86,7 +87,7 @@ const Signup = () => {
         emailRef.current.value = '';
         passwordRef.current.value = '';
         phoneRef.current.value = '';
-        roleRef.current.value = '';
+        // roleRef.current.value = '';
 
     }
 
@@ -133,15 +134,13 @@ const Signup = () => {
                                 Role
                             </InputLabel>
                             <NativeSelect
-                                // defaultValue={1}
                                 onChange={(e) => setRole(e.target.value)}
-                                ref={roleRef}
+                                // ref={roleRef}
                             >
                                 {
                                     roleArray?.map((role,index) => {
                                         return (
-
-                                            <option value={role?.id} key={role?.id}>{role?.title}</option>
+                                            <option value={role?.id} >{role?.title}</option>
                                         )
                                     })
                                 }
