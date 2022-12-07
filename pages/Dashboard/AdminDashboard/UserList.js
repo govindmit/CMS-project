@@ -102,7 +102,12 @@ export default function UserList() {
         Authorization: `Bearer ${accestoken}`,
       },
     };
-    const { data } = await axios.get(`http://192.168.168.29:8080/api/user/getusers?search=${search}`, config);
+
+
+    
+    // const { data } = await axios.get(`http://192.168.168.29:8080/api/user/getusers?search=${search}`, config);
+    const { data } = await axios.get(`https://curious-veil-frog.cyclic.app/api/user/getusers?search=${search}`, config);
+
     setLoading(false);
     setUsers(data)
   };

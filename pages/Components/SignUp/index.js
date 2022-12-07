@@ -32,13 +32,12 @@ const Signup = () => {
 
     useEffect(() => {
         getallroles()
-       
-    },[]);
-    
+    }, []);
+
     const getallroles = async () => {
         await UserService.getAllRole().then((roleData) => {
-            console.log("roles ===",roleData)
-            // setRole(roleData?.data[0].id)
+            console.log("roles ===", roleData)
+            setRole(roleData?.data[0].id)
             setRoleArray(roleData?.data)
         })
     }
@@ -55,10 +54,7 @@ const Signup = () => {
             phone: phone,
             role: role
         }
-        console.log(role)
-
         await UserService.addUser(data).then(res => {
-            console.log(res)
             if (res.status === 200) {
                 toast.success(res.data.message, {
                     position: "top-right",
@@ -137,7 +133,10 @@ const Signup = () => {
                             <NativeSelect
                                 defaultValue={1}
                                 onChange={(e) => setRole(e.target.value)}
-                                // ref={roleRef}
+                                inputProps={{
+                                    name: 'age',
+                                    id: 'uncontrolled-native',
+                                }}
                             >
                                 {
                                     roleArray?.map((role,index) => {

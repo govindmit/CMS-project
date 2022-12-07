@@ -130,19 +130,18 @@ export default function Sidebar({ children }) {
     { name: 'Users', href: '/Dashboard/AdminDashboard/UserList', show: 'Admin' },
     { name: 'Roles', href: '/Dashboard/AdminDashboard/RoleList', show: 'Admin' },
     { name: 'My profile', href: '/Dashboard/AdminDashboard/Profile', show: 'Admin' },
-    { name: 'Settings', href: '/', show: 'Admin' },
+    // { name: 'Settings', href: '/', show: 'Admin' },
     // { name: 'Pages', href: '/Dashboard/AdminDashboard/CreatePages', show: 'Admin' },
     { name: 'Pages', href: '/Dashboard/AdminDashboard/PageList', show: 'Admin' },
 
     
     { name: 'My profile', href: '/Dashboard/AdminDashboard/Profile', show: 'Editor' },
     { name: 'Pages', href: '/Dashboard/AdminDashboard/PageList', show: 'Editor' },
-    
-    { name: 'Settings', href: '/', show: 'Editor' },
+    // { name: 'Settings', href: '/', show: 'Editor' },
 
     { name: 'My profile', href: '/Dashboard/AdminDashboard/Profile', show: 'Author' },
     { name: 'Pages', href: '/Dashboard/AdminDashboard/PageList', show: 'Author' },
-    { name: 'Settings', href: '/', show: 'Author' },
+    // { name: 'Settings', href: '/', show: 'Author' },
 
     { name: 'My profile', href: '/Dashboard/AdminDashboard/Profile', show: 'Subscriber' },
     { name: 'Pages', href: '/Dashboard/SubscriberDashboard/page', show: 'Subscriber' },
@@ -205,7 +204,7 @@ export default function Sidebar({ children }) {
                 }}
                 href={text.href}
               >
-                <ListItemIcon
+                {/* <ListItemIcon
                   sx={{
                     minWidth: 0,
                     mr: open ? 3 : 'auto',
@@ -213,7 +212,7 @@ export default function Sidebar({ children }) {
                   }}
                 >
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
+                </ListItemIcon> */}
                 <ListItemText primary={text.name} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>

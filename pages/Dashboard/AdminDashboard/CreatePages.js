@@ -15,7 +15,7 @@ const CreatePages = () => {
   const [name, setName] = useState();
   const [description, setDescription] = useState();
   const [author, setAuthor] = useState();
-  const [status, setStatus] = useState();
+  const [status, setStatus] = useState('Published');
   const [slug, setSlug] = useState();
 
   const emailEditorRef = useRef(null);
@@ -45,6 +45,7 @@ const CreatePages = () => {
       slug: s,
       html: html
     }
+    console.log(pagedata)
     await UserService.createPageApi(pagedata, accestoken).then((res) => {
       if (res.status === 200) {
         toast.success(res.data.message, {
