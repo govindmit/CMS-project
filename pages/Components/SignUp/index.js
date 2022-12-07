@@ -142,7 +142,7 @@ const Signup = () => {
                                 {
                                     roleArray?.map((role,index) => {
                                         return (
-                                            <option value={role?.id} >{role?.title}</option>
+                                            <option value={role?.id} key={role?.id} >{role?.title}</option>
                                         )
                                     })
                                 }

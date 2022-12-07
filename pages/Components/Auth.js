@@ -15,6 +15,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Avatar } from '@mui/material';
 import Navbar from '../Navbar';
+import Profile from './Profile';
 
 const Auth = () => {
     const [value, setValue] = useState('1');
