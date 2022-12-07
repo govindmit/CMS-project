@@ -1,29 +1,30 @@
 
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import '../styles/globals.css'
+import Viewpage from './Editor/ViewPage/[id]';
 
 import Sidebar from './Sidebar';
 
 function MyApp({ Component, pageProps }) {
-  const [loginuser, setLoginUser] = useState()
-  const [value, setValue] = useState('')
+  const [loginuser, setLoginUser] = useState();
+  const [viewFlag,setViewFlag] = useState();
 
   useEffect(() => {
-
     setLoginUser(JSON.parse(localStorage.getItem('loginUser')));
-  }, [])
+    setViewFlag(localStorage.getItem('viewFlag'))
+  }, []);
+
   return (
     <React.StrictMode>
     <div>
-      {loginuser ?
+      {loginuser ? 
         <Sidebar>
          <Component {...pageProps} />
         </Sidebar>
         :  <Component {...pageProps} />
       }
-
-    </div>
+      
+    </div> 
     </React.StrictMode>
   )
 }

@@ -59,10 +59,24 @@ const PageList = () => {
         route.push('/Editor/RichTextEditor')
     }
 
-    const detailsFn = async (id,slug) => {
-        route.push(`/Editor/ViewPage/${id}`)
-        // window.open(
-        //     `/Editor/ViewPage/${slug}`, "_blank");
+    const detailsFn = async (slug,status) => {
+        console.log("--------",slug)
+        if(status === 'UnPublished'){
+            toast.error("This page in unpublish , Can't view this page", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+              });
+        }else{
+            // route.push(`/Editor/ViewPage/${slug}`);
+            localStorage.setItem('viewFlag',slug);
+            window.open(`/Editor/ViewPage/${slug}`);
+        }
     }
 
     const handleSearch = async () => {
@@ -71,7 +85,7 @@ const PageList = () => {
         const config = {
             headers: {
                 Authorization: `Bearer ${accestoken}`,
-            },
+            },  
         };
         const { data } = await axios.get(`http://192.168.168.29:8080/api/page/getpages?search=${search}`, config);
         setLoading(false);
@@ -85,14 +99,37 @@ const PageList = () => {
     const removeFn = async (id) => {
         const accestoken = localStorage.getItem('accessToken');
         await UserService.removePage(id, accestoken).then((res) => {
-            if (res.status === 200) {
-            }
+           if(res.status === 200){
+            toast.success(res.data.message, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+              });
+              getAllPage();
+           }else{
+            toast.error('somthing went wrong to delete page', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+              });
+           }
         })
     }
 
   
     return (
         <div>
+            <ToastContainer/>
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static" style={{ backgroundColor: 'Silver' }}>
                     <Toolbar>
@@ -118,14 +155,6 @@ const PageList = () => {
                     </Toolbar>
                 </AppBar>
             </Box>
-
-            {/* <Box sx={{ flexGrow: 1 }}>
-                <AppBar position="static" style={{ backgroundColor: 'Silver' }}>
-                    <Toolbar>
-                        <Button onClick={handleClickOpen}>create New Page</Button>
-                    </Toolbar>
-                </AppBar>
-            </Box> */}
             <TableContainer component={Paper} style={{ marginTop: '10px' }}>
                 <Table sx={{ minWidth: 700 }} aria-label="customized table">
                     <TableHead>
@@ -133,9 +162,9 @@ const PageList = () => {
                             <StyledTableCell>Id</StyledTableCell>
                             <StyledTableCell>Name</StyledTableCell>
                             <StyledTableCell>Author</StyledTableCell>
-                            <StyledTableCell>description</StyledTableCell>
+                            {/* <StyledTableCell>description</StyledTableCell> */}
                             <StyledTableCell>status</StyledTableCell>
-                            <StyledTableCell>Actions</StyledTableCell>
+                            <StyledTableCell align="center-right">Actions</StyledTableCell>
 
 
 
@@ -152,12 +181,12 @@ const PageList = () => {
                                     <StyledTableCell>{row.name}</StyledTableCell>
                                     <StyledTableCell>{row.author.title}</StyledTableCell>
 
-                                    <StyledTableCell>
+                                    {/* <StyledTableCell>
                                         {row.description}
-                                    </StyledTableCell>
+                                    </StyledTableCell> */}
                                     <StyledTableCell>{row.status}</StyledTableCell>
                                     <StyledTableCell>
-                                        <Button onClick={() => { detailsFn(row.id,row.slug) }}>view</Button>
+                                        <Button onClick={() => { detailsFn(row.slug,row.status) }}>view</Button>
                                         <Button onClick={() => { editPageFn(row.id) }}>Edit</Button>
                                         <Button onClick={() => { removeFn(row.id) }}>Remove</Button>
                                     </StyledTableCell>

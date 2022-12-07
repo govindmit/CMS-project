@@ -145,6 +145,7 @@ export default function Sidebar({ children }) {
     { name: 'Settings', href: '/', show: 'Author' },
 
     { name: 'My profile', href: '/Dashboard/AdminDashboard/Profile', show: 'Subscriber' },
+    { name: 'Pages', href: '/Dashboard/SubscriberDashboard/page', show: 'Subscriber' },
 
     { name: 'Home', href: '/', show: 'home' },
     { name: 'Services', href: '/', show: 'home' },

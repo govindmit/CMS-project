@@ -33,10 +33,11 @@ const Signup = () => {
     useEffect(() => {
         getallroles()
        
-    });
+    },[]);
     
     const getallroles = async () => {
         await UserService.getAllRole().then((roleData) => {
+            console.log("roles ===",roleData)
             // setRole(roleData?.data[0].id)
             setRoleArray(roleData?.data)
         })
@@ -134,6 +135,7 @@ const Signup = () => {
                                 Role
                             </InputLabel>
                             <NativeSelect
+                                defaultValue={1}
                                 onChange={(e) => setRole(e.target.value)}
                                 // ref={roleRef}
                             >

@@ -92,8 +92,8 @@ class userService {
     })
   }
 
-  getOnePages(id,token){
-    return http.get(`api/page/getpages/${id}`,{
+  getOnePages(slug,token){
+    return http.get(`/api/page/slug/${slug}`,{
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -109,7 +109,7 @@ class userService {
   }
 
   removePage(id,token){
-    return http.delete(`page/deletepage/${id}`,{
+    return http.delete(`api/page/deletepage/${id}`,{
       headers: {
         'Authorization': `Bearer ${token}`
       }

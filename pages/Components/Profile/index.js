@@ -8,8 +8,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
-import { Avatar, Grid, Paper, TextField } from '@mui/material';
+import { Grid, Paper, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -21,6 +20,7 @@ import InboxIcon from '@mui/icons-material/Inbox';
 import DraftsIcon from '@mui/icons-material/Drafts';
 import UserService from '../../../Service/UserService';
 import { Phone } from '@material-ui/icons';
+import { useRouter } from 'next/router';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -61,6 +61,7 @@ BootstrapDialogTitle.propTypes = {
 };
 
 const Profile = ({ children }) => {
+    const route = useRouter()
     const paperStyle = { padding: 20, height: '25vh', width: 350, margin: "0 auto" }
     const avatarStyle = { backgroundColor: '#1bbd7e' }
     const [open, setOpen] = React.useState(false);
@@ -83,9 +84,15 @@ const Profile = ({ children }) => {
     const myProfile = async () => {
         const u = JSON.parse(localStorage.getItem('loginUser'))
         const accestoken = localStorage.getItem('accessToken');
-        UserService.getUserProfile(u?.id,accestoken).then((userData) => {
+        UserService.getUserProfile(u?.id, accestoken).then((userData) => {
             setMyData(userData.data)
         })
+    }
+    
+    const logoutFn = async () => {
+        localStorage.removeItem('loginUser');
+        localStorage.removeItem('accessToken');
+        route.replace('/')
     }
 
     return (
@@ -99,12 +106,7 @@ const Profile = ({ children }) => {
                 </BootstrapDialogTitle>
                 <DialogContent dividers style={paperStyle}>
                     <Grid>
-                        <Paper >
-                            {/* <Grid align='center'>
-                                <Avatar style={avatarStyle} src={loginuser?.pic}>
-
-                                </Avatar>
-                            </Grid> */}
+                        <Paper>
                             <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                                 <nav aria-label="main mailbox folders">
                                     <List>
@@ -143,9 +145,13 @@ const Profile = ({ children }) => {
                     <Button autoFocus onClick={handleClose}>
                         Close
                     </Button>
+                    <Button autoFocus onClick={() => { logoutFn(); handleClose() }}>
+                        LogOut
+                    </Button>
                 </DialogActions>
             </BootstrapDialog>
         </div>
     );
 }
+
 export default Profile

@@ -100,7 +100,7 @@ export default function RoleList() {
         });
         getallRoles()
       } else {
-        toast.error('Somthing went wrong ', {
+        toast.error(data.data.message, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,

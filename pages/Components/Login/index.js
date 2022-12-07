@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { Grid, Paper, Avatar, TextField, Button, Typography, Link } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+
 import UserService from '../../../Service/UserService';
 import { useRouter } from 'next/router';
 import jwt from 'jwt-decode';
@@ -10,11 +9,11 @@ import jsonwebtoken from 'jsonwebtoken'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const Login = ({ handleChange }) => {
+    const route = useRouter()
     const [isForgot, setIsForgot] = useState(false)
 
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
-    const route = useRouter()
 
     const paperStyle = { padding: 20, height: '73vh', width: 300, margin: "0 auto" }
     const avatarStyle = { backgroundColor: '#1bbd7e' }
@@ -29,7 +28,7 @@ const Login = ({ handleChange }) => {
             const token = res.data.accessToken
             const user = jwt(token);
 
-            console.log("response ==",res)
+            console.log("response ==", res)
             if (res.status === 200) {
                 toast.success('Login successfully ', {
                     position: "top-right",
@@ -72,7 +71,7 @@ const Login = ({ handleChange }) => {
     }
 
     const forgetPassFn = async () => {
-    // const accestoken = localStorage.getItem('accessToken');
+        // const accestoken = localStorage.getItem('accessToken');
         const data = {
             email: email
         }
@@ -81,12 +80,12 @@ const Login = ({ handleChange }) => {
         const jwt = jsonwebtoken.sign(
             { data: data },
             signingKey,
-            { expiresIn: '1h'}
+            { expiresIn: '1h' }
         );
 
-        localStorage.setItem("resetAuth",jwt)
-        await UserService.forgetPassLink(data).then((res)=>{
-            if(res.status === 200){
+        localStorage.setItem("resetAuth", jwt)
+        await UserService.forgetPassLink(data).then((res) => {
+            if (res.status === 200) {
                 toast.success(res.data.message, {
                     position: "top-right",
                     autoClose: 5000,
@@ -99,7 +98,7 @@ const Login = ({ handleChange }) => {
                 });
             }
         })
-        
+
     }
 
     return (

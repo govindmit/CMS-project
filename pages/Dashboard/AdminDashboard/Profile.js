@@ -16,23 +16,23 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function Profile() {
     const [open, setOpen] = useState(false);
     const [loginuser, setLoginuser] = useState();
-    const [myData,setMyData] = useState();
-    const [roleArray,setRoleArray] = useState([])
+    const [myData, setMyData] = useState();
+    const [roleArray, setRoleArray] = useState([])
 
-    const [roleValue,setRoleValue] = useState();
-    const [roleTitle,setRoleTitle] = useState();
+    const [roleValue, setRoleValue] = useState();
+    const [roleTitle, setRoleTitle] = useState();
 
-    const [name,setName] = useState();
-    const [email,setEmail] = useState();
-    const [phone,setPhone] = useState();
+    const [name, setName] = useState();
+    const [email, setEmail] = useState();
+    const [phone, setPhone] = useState();
 
-     const paperStyle = { padding: 20, width: 300, margin: "0 auto" }
+    const paperStyle = { padding: 20, width: 300, margin: "0 auto" }
     const avatarStyle = { backgroundColor: '#1bbd7e' }
 
     const handleClickOpen = () => {
         setOpen(true);
     };
-  
+
     const handleClose = () => {
         setOpen(false);
     };
@@ -49,10 +49,10 @@ export default function Profile() {
         })
     }
 
-    const myProfile = async () =>{
+    const myProfile = async () => {
         const u = JSON.parse(localStorage.getItem('loginUser'))
         const accestoken = localStorage.getItem('accessToken');
-       await  UserService.getUserProfile(u?.id,accestoken).then((userData) => {
+        await UserService.getUserProfile(u?.id, accestoken).then((userData) => {
             setMyData(userData.data);
 
             setRoleValue(userData.data.role.id)
@@ -63,34 +63,34 @@ export default function Profile() {
 
         })
     }
-   const updateProfile = async()=>{
-    const u = JSON.parse(localStorage.getItem('loginUser'));
-    const accestoken = localStorage.getItem('accessToken');
-       const data = {
-        name,
-        email,
-        phone,
-        role:roleValue
-       }
-       await UserService.updateprofile(u.id,data,accestoken).then(data=>{
-        if(data.status ===200){
-            toast.success(data.data.message, {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-              });
-              myProfile()
+    const updateProfile = async () => {
+        const u = JSON.parse(localStorage.getItem('loginUser'));
+        const accestoken = localStorage.getItem('accessToken');
+        const data = {
+            name,
+            email,
+            phone,
+            role: roleValue
         }
-       })
-   }
+        await UserService.updateprofile(u.id, data, accestoken).then(data => {
+            if (data.status === 200) {
+                toast.success(data.data.message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                myProfile()
+            }
+        })
+    }
     return (
         <div>
-              <ToastContainer />
+            <ToastContainer />
             <Card sx={{ maxWidth: 345 }}>
                 <CardHeader
                     avatar={
@@ -98,7 +98,7 @@ export default function Profile() {
                     }
                     action={
                         <IconButton aria-label="settings">
-                            <EditIcon onClick={handleClickOpen}  />
+                            <EditIcon onClick={handleClickOpen} />
                         </IconButton>
                     }
                     title={myData?.name}
@@ -131,12 +131,12 @@ export default function Profile() {
                                     <NativeSelect
                                         defaultValue={roleValue}
                                         inputProps={{
-                                          id: 'uncontrolled-native',
+                                            id: 'uncontrolled-native',
                                         }}
-                                        onChange={(e) => { setRoleValue(e.target.value) }} 
+                                        onChange={(e) => { setRoleValue(e.target.value) }}
                                     >
-                                        {roleArray?.map((r)=>{
-                                            return(
+                                        {roleArray?.map((r) => {
+                                            return (
                                                 <option value={r.id} key={r.id}>{r.title}</option>
                                             )
                                         })}
@@ -150,14 +150,14 @@ export default function Profile() {
                                 <TextField fullWidth label='Name' placeholder="Enter your name" defaultValue={name} onChange={(e) => { setName(e.target.value) }} />
                                 <TextField fullWidth label='Email' placeholder="Enter your email" defaultValue={email} onChange={(e) => { setEmail(e.target.value) }} />
                                 <TextField fullWidth label='Phone' placeholder="Enter your Phone" defaultValue={phone} onChange={(e) => { setPhone(e.target.value) }} />
-        
+
                             </form>
                         </Paper>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={()=>{updateProfile();handleClose()}}>Update</Button>
+                    <Button onClick={() => { updateProfile(); handleClose() }}>Update</Button>
                 </DialogActions>
             </Dialog>
         </div>
