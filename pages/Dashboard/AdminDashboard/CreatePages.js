@@ -13,8 +13,7 @@ const CreatePages = () => {
   const [open, setOpen] = useState(false);
   const [user, SetUser] = useState()
   const [name, setName] = useState();
-  const [description, setDescription] = useState();
-  const [author, setAuthor] = useState();
+
   const [status, setStatus] = useState('Published');
   const [slug, setSlug] = useState();
 
@@ -22,6 +21,9 @@ const CreatePages = () => {
 
   useEffect(() => {
     const u = JSON.parse(localStorage.getItem('loginUser'));
+    if(u.role.title === 'Author'){
+      setStatus('UnPublished')
+    }
     SetUser(u);
   }, [])
 
@@ -37,6 +39,7 @@ const CreatePages = () => {
     const s = await generateSlug(slug)
     const accestoken = localStorage.getItem('accessToken');
     const u = JSON.parse(localStorage.getItem('loginUser'));
+    console.log(u)
     const pagedata = {
       name: name,
       description: ' ',
@@ -114,9 +117,7 @@ const CreatePages = () => {
         autoComplete="off"
       >
         <TextField id="outlined-basic" label="name" variant="outlined" onChange={(e) => { setName(e.target.value) }} />
-        {/* <TextField id="filled-basic" label="description" variant="outlined" onChange={(e) => { setDescription(e.target.value) }} /> */}
-        {/* <TextField id="standard-basic" label="author" variant="outlined" onChange={(e) => { setAuthor(e.target.value) }} /> */}
-        {/* <TextField id="filled-basic" label="status" variant="outlined" onChange={(e) => { setStatus(e.target.value) }} /> */}
+     
         {user && user?.role?.title === 'Author' ? '' : <FormControl fullWidth>
           <InputLabel variant="standard" htmlFor="uncontrolled-native">
             Status

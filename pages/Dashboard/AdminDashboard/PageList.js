@@ -54,7 +54,7 @@ const PageList = () => {
             setPageArray(pagedata.data)
         })
     }
-
+    console.log("pageArray ====",pageArray)
     const handleClickOpen = async () => {
         route.push('/Editor/RichTextEditor')
     }
@@ -169,15 +169,11 @@ const PageList = () => {
                             {/* <StyledTableCell>description</StyledTableCell> */}
                             <StyledTableCell>status</StyledTableCell>
                             <StyledTableCell align="center-right">Actions</StyledTableCell>
-
-
-
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {
                             pageArray?.map((row) => (
-                               
                                 <StyledTableRow key={row.name}>
                                     <StyledTableCell component="th" scope="row">
                                         {row.id}

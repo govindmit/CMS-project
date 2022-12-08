@@ -1,8 +1,12 @@
 import React from 'react'
+import PageList from '../AdminDashboard/PageList'
 
 const Author = () => {
   return (
-    <div>Author</div>
+    <div>
+
+      <PageList/>
+    </div>
   )
 }
 
