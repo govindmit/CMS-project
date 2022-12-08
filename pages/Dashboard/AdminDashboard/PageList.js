@@ -97,7 +97,9 @@ const PageList = () => {
     };
 
     const editPageFn = async (id) => {
-        route.push(`/Editor/EditPage/${id}`)
+        route.push(`/Editor/EditTextEditor/${id}`)
+
+        // route.push(`/Editor/EditPage/${id}`)
     }
 
     const removeFn = async (id) => {

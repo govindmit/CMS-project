@@ -9,8 +9,6 @@ import { useRouter } from 'next/router';
 
 const CreatePages = () => {
   const route = useRouter()
-
-  const [open, setOpen] = useState(false);
   const [user, SetUser] = useState()
   const [name, setName] = useState();
 
@@ -30,12 +28,12 @@ const CreatePages = () => {
   const exportHtml = async () => {
     emailEditorRef.current.editor.exportHtml((data) => {
       const { design, html } = data;
-      pageFn(html)
-      // console.log('exportHtml', html);
+      pageFn(html,design)
+      console.log('designdesign', design);
     });
   };
 
-  const pageFn = async (html) => {
+  const pageFn = async (html,design) => {
     const s = await generateSlug(slug)
     const accestoken = localStorage.getItem('accessToken');
     const u = JSON.parse(localStorage.getItem('loginUser'));
@@ -46,7 +44,8 @@ const CreatePages = () => {
       author: u.id,
       status: status,
       slug: s,
-      html: html
+      html: html,
+      design:JSON.stringify(design)
     }
     console.log(pagedata)
     await UserService.createPageApi(pagedata, accestoken).then((res) => {
@@ -104,7 +103,7 @@ const CreatePages = () => {
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static" style={{ backgroundColor: 'Silver' }}>
           <Toolbar>
-            <Button onClick={exportHtml}>Export Page</Button>
+            <Button onClick={exportHtml}>Create Page</Button>
           </Toolbar>
         </AppBar>
       </Box>

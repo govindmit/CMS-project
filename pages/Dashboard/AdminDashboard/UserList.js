@@ -1,4 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
+
+import { Grid, Paper, Avatar, Typography, TextField, Button, NativeSelect, OutlinedInput, InputAdornment, IconButton, FilledInput, Input, } from '@material-ui/core'
+import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+
+
+
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,14 +15,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Box } from '@mui/system';
-import { Grid, Paper, Avatar, Typography, TextField, Button, NativeSelect } from '@material-ui/core'
-import { AppBar, Dialog, DialogActions, DialogContent, FormControl, IconButton, Input, InputLabel, Toolbar } from '@mui/material';
+import { AppBar, Dialog, DialogActions, DialogContent, Toolbar } from '@mui/material';
 import UserService from '../../../Service/UserService';
 import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
 import AddUser from './addUser';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -41,17 +49,21 @@ export default function UserList() {
 
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
   const [users, setUsers] = useState([]);
   const [roleArray, setRoleArray] = useState([]);
 
   const [name, setName] = useState();
   const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
   const [phone, setPhone] = useState();
   const [roleValue, setRoleValue] = useState();
   const [roleName, setRoleName] = useState();
   const [userId, setUserId] = useState();
   const [status, setStatus] = useState();
+
+  const [nameErr, setNameErr] = useState(false);
+  const [emailErr, setEmailErr] = useState(false);
+  const [phoneErr, setPhoneErr] = useState(false);
 
 
 
@@ -65,6 +77,11 @@ export default function UserList() {
   }, []);
 
   const handleClickOpen = async (id) => {
+
+    if (!name) { setNameErr(true) }
+    if (!email) { setEmailErr(true) }
+    if (!phone) { setPhoneErr(true) }
+    
     setUserId(id)
     const accestoken = localStorage.getItem('accessToken');
     await UserService.getUserProfile(id, accestoken).then((userData) => {
@@ -102,9 +119,6 @@ export default function UserList() {
         Authorization: `Bearer ${accestoken}`,
       },
     };
-
-
-    
     // const { data } = await axios.get(`http://192.168.168.29:8080/api/user/getusers?search=${search}`, config);
     const { data } = await axios.get(`https://curious-veil-frog.cyclic.app/api/user/getusers?search=${search}`, config);
 
@@ -142,7 +156,7 @@ export default function UserList() {
       email: email,
       phone: phone,
       role: roleValue,
-      status:status
+      status: status
     }
     const accestoken = localStorage.getItem('accessToken');
 
@@ -159,7 +173,7 @@ export default function UserList() {
           theme: "light",
         });
         getAlluser()
-      }else{
+      } else {
         toast.error(data.data.message, {
           position: "top-right",
           autoClose: 5000,
@@ -173,6 +187,22 @@ export default function UserList() {
       }
     })
   }
+
+  const changeStatus = async (id, status) => {
+    const data = {
+      status: status
+    }
+    const accestoken = localStorage.getItem('accessToken');
+
+    await UserService.updateprofile(id, data, accestoken).then((data) => {
+      setLoading1(true);
+      if (data.data.status === 200) {
+        setLoading1(false)
+      }
+      getAlluser()
+    })
+  }
+
   return (
     <div>
       <ToastContainer />
@@ -219,8 +249,14 @@ export default function UserList() {
                   <StyledTableCell>Name</StyledTableCell>
                   <StyledTableCell align="right">Phone</StyledTableCell>
                   <StyledTableCell align="right">Email&nbsp;</StyledTableCell>
+                  <StyledTableCell align="right">Role&nbsp;</StyledTableCell>
+
                   <StyledTableCell align="right">Status&nbsp;</StyledTableCell>
-                  <StyledTableCell align="right">Actions&nbsp;</StyledTableCell>
+                  <StyledTableCell align="right">Remove&nbsp;</StyledTableCell>
+                  <StyledTableCell align="right">Edit&nbsp;</StyledTableCell>
+
+                  <StyledTableCell align="right">Change Status&nbsp;</StyledTableCell>
+
 
                 </TableRow>
               </TableHead>
@@ -233,12 +269,20 @@ export default function UserList() {
                       </StyledTableCell>
                       <StyledTableCell align="right">{row.phone}</StyledTableCell>
                       <StyledTableCell align="right">{row.email}</StyledTableCell>
-                      
-                      <StyledTableCell align="right">{row.status}</StyledTableCell>
-                      <StyledTableCell align="right"><Button onClick={() => { removeFn(row.id) }}>Remove</Button> &nbsp;&nbsp;
-                        <Button onClick={() => { handleClickOpen(row.id) }}>Edit</Button></StyledTableCell>
+                      <StyledTableCell align="right">{row.role.title}</StyledTableCell>
 
+                      <StyledTableCell align="right">{row.status}</StyledTableCell>
+                      <StyledTableCell align="right"><Button style={{ backgroundColor: 'red', color: "white" }} onClick={() => { removeFn(row.id) }}>Remove</Button> &nbsp;&nbsp;
+                      </StyledTableCell>
+                      <StyledTableCell align="right">
+                        <Button style={{ backgroundColor: 'orange', color: "white" }} onClick={() => { handleClickOpen(row.id) }}>Edit</Button></StyledTableCell>
+                      <StyledTableCell align="right">
+                        <Button style={{ backgroundColor: 'green', color: "white" }} onClick={() => { changeStatus(row.id, row.status === 'verified' ? 'unverified' : 'verified') }}>
+                          {row.status === 'verified' ? 'unverified' : 'verified'}
+                        </Button>
+                      </StyledTableCell>
                     </StyledTableRow>
+
                   ))
                 }
               </TableBody>
@@ -247,7 +291,7 @@ export default function UserList() {
           </TableContainer>
           {/* ------------------------------------------------------------------------------------ */}
 
-          <Dialog open={open} onClose={handleClose}>
+          {/* <Dialog open={open} onClose={handleClose}>
             <DialogContent>
               <Grid>
                 <Paper style={paperStyle}>
@@ -285,7 +329,7 @@ export default function UserList() {
                         onChange={(e) => { setStatus(e.target.value) }}
                       >
                         <option defaultValue={status} >{status}</option>
-                        <option value={status==='verified'?'unverified':'verified'}>{status==='verified'?'unverified':'verified'}</option>
+                        <option value={status === 'verified' ? 'unverified' : 'verified'}>{status === 'verified' ? 'unverified' : 'verified'}</option>
                       </NativeSelect>
                     </FormControl>
                     <TextField fullWidth label='Name' placeholder="Enter your name" defaultValue={name} onChange={(e) => { setName(e.target.value) }} />
@@ -299,7 +343,54 @@ export default function UserList() {
               <Button onClick={handleClose}>Cancel</Button>
               <Button onClick={(e) => { updateFn(); handleClose() }}>Update</Button>
             </DialogActions>
+          </Dialog> */}
+
+
+          <Dialog open={open} onClose={handleClose}>
+            <DialogContent>
+              <Grid>
+                <Paper style={paperStyle}>
+                  <Grid align='center'>
+                    <Avatar style={avatarStyle}>
+                    </Avatar>
+                  </Grid>
+                  <form>
+                    <FormControl fullWidth>
+                      <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                        Role
+                      </InputLabel>
+                      <NativeSelect
+                        defaultValue={roleName}
+                        onChange={(e) => { setRoleValue(e.target.value) }}
+                      >
+                        <option defaultValue={roleValue} >{roleName}</option>
+                        {
+                          roleArray?.map((role) => {
+                            return (
+                              <>
+                                <option value={role?.id}>{role?.title}</option>
+                              </>
+                            )
+                          })
+                        }
+                      </NativeSelect>
+                    </FormControl>
+
+                    <TextField fullWidth label='Name' placeholder="Enter your name" style={{ marginTop: '20px' }} defaultValue={name} onChange={(e) => { setName(e.target.value) }} />
+                    <TextField fullWidth label='Email' placeholder="Enter your email" style={{ marginTop: '20px' }} defaultValue={email} onChange={(e) => { setEmail(e.target.value) }} />
+                    <TextField fullWidth label='Phone' placeholder="Enter your Phone" style={{ marginTop: '20px' }} defaultValue={phone} onChange={(e) => { setPhone(e.target.value) }} />
+                  </form>
+                </Paper>
+              </Grid>
+            </DialogContent>
+
+            <DialogActions style={{ marginTop: '15px' }} >
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={(e) => { updateFn(); handleClose() }}>Update</Button>
+            </DialogActions>
+
           </Dialog>
+
         </div>
       }
 

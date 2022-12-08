@@ -22,6 +22,12 @@ const AddUser = ({ children }) => {
     const [phone, setPhone] = useState();
     const [role, setRole] = useState();
 
+    const [nameErr, setNameErr] = useState(false);
+    const [emailErr, setEmailErr] = useState(false);
+    const [passErr, setPassErr] = useState(false);
+    const [phoneErr, setPhoneErr] = useState(false);
+
+
     const nameRef = useRef(null);
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
@@ -56,34 +62,47 @@ const AddUser = ({ children }) => {
             role: role
         }
 
-        await UserService.addUser(data).then(res => {
-            window.location.reload()
-            getAlluser();
-            if (res.status === 201) {
-                toast.success(res.data.message, {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                  });
-            } else {
-                toast.error(res.data.message, {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                });
-            }
-        })
-
+        if(!name || !email || !phone || !password){
+            toast.error("Please fill all fields", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        }else{
+            await UserService.addUser(data).then(res => {
+                window.location.reload()
+                getAlluser();
+                if (res.status === 201) {
+                    toast.success(res.data.message, {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                      });
+                      setOpen(false);
+                } else {
+                    toast.error(res.data.message, {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                }
+            })
+        }
     }
 
     const getAlluser = async () => {
@@ -140,7 +159,7 @@ const AddUser = ({ children }) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={(e) => { addUserFn(e); handleClose() }}>Add</Button>
+                    <Button onClick={(e) => { addUserFn(e) }}>Add</Button>
                 </DialogActions>
             </Dialog>
         </div>

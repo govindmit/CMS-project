@@ -35,6 +35,8 @@
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.4.4",
     "react-rte": "^0.16.5",
-    "react-toastify": "^9.1.1"
+    "react-toastify": "^9.1.1",
+    "react-validation": "^3.0.7",
+    "validator": "^13.7.0"
   }
 }
