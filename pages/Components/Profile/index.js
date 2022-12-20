@@ -88,11 +88,12 @@ const Profile = ({ children }) => {
             setMyData(userData.data)
         })
     }
-    
+
     const logoutFn = async () => {
         localStorage.removeItem('loginUser');
         localStorage.removeItem('accessToken');
-        route.replace('/')
+        window.location = '/'
+        // route.push('/')
     }
 
     return (

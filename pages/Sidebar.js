@@ -20,6 +20,8 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import Profile from './Components/Profile';
 import { Avatar } from '@mui/material';
+import UserService from '../Service/UserService';
+import { Button } from '@material-ui/core';
 
 const drawerWidth = 240;
 
@@ -96,17 +98,21 @@ export default function Sidebar({ children }) {
   const [accessToken, setAccesstoken] = useState();
   const [menuLink, setMenuLink] = useState([])
   const [show, setShow] = useState('home');
+  const [pageArray, setPageArray] = useState([]);
+
+
 
   useEffect(() => {
     const u = JSON.parse(localStorage.getItem('loginUser'));
-    setAccesstoken(localStorage.getItem('accessToken'))
+    setAccesstoken(localStorage.getItem('accessToken'));
+    getPublishPages();
     if (u && u?.role?.title === 'Admin') {
       setShow(u?.role?.title)
-    } 
-   else if (u && u?.role?.title === 'Editor') {
+    }
+    else if (u && u?.role?.title === 'Editor') {
       setShow(u?.role?.title)
     }
-  else if (u && u?.role?.title === 'Author') {
+    else if (u && u?.role?.title === 'Author') {
       setShow(u?.role?.title)
     }
     else if (u && u?.role?.title === 'Subscriber') {
@@ -125,6 +131,18 @@ export default function Sidebar({ children }) {
     setOpen(false);
   };
 
+  const getPublishPages = async () => {
+    const accestoken = localStorage.getItem('accessToken');
+    await UserService.getAllPages(accestoken).then(pages => {
+      setPageArray(pages.data)
+    })
+  }
+  
+  const pageFn = async (slug) =>{
+     localStorage.setItem('viewFlag',slug);
+     window.open(`/Editor/ViewPage/${slug}`);
+  } 
+
   const LinkItems = [
 
     { name: 'Users', href: '/Dashboard/AdminDashboard/UserList', show: 'Admin' },
@@ -134,7 +152,7 @@ export default function Sidebar({ children }) {
     // { name: 'Pages', href: '/Dashboard/AdminDashboard/CreatePages', show: 'Admin' },
     { name: 'Pages', href: '/Dashboard/AdminDashboard/PageList', show: 'Admin' },
 
-    
+
     { name: 'My profile', href: '/Dashboard/AdminDashboard/Profile', show: 'Editor' },
     { name: 'Pages', href: '/Dashboard/AdminDashboard/PageList', show: 'Editor' },
     // { name: 'Settings', href: '/', show: 'Editor' },
@@ -173,8 +191,19 @@ export default function Sidebar({ children }) {
             <MenuIcon >{children}</MenuIcon>
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            News
+            CMS
           </Typography>
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            {pageArray?.map((item) => {
+              if (item.status === 'Published') {
+                return (
+                  <Button key={item.name} sx={{ color: '#fff' }} onClick={()=>{pageFn(item.slug) }}>
+                    {item.name}
+                  </Button>
+                )
+              }
+            })}
+          </Box>
           <Typography color="inherit">
             {
               accessToken ?

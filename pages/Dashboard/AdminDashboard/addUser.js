@@ -6,6 +6,8 @@ import InputLabel from '@mui/material/InputLabel';
 import { Dialog, DialogActions, DialogContent } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import 'react-phone-number-input/style.css'
+import PhoneInput from 'react-phone-number-input'
 
 const AddUser = ({ children }) => {
     const [open, setOpen] = useState(false);
@@ -26,7 +28,8 @@ const AddUser = ({ children }) => {
     const [emailErr, setEmailErr] = useState(false);
     const [passErr, setPassErr] = useState(false);
     const [phoneErr, setPhoneErr] = useState(false);
-
+    const [isError, setIsError] = useState(false);
+    const [validEmailError, setValidEmailError] = useState(null);
 
     const nameRef = useRef(null);
     const emailRef = useRef(null);
@@ -34,9 +37,9 @@ const AddUser = ({ children }) => {
     const phoneRef = useRef(null);
     const roleRef = useRef(null);
 
-    useEffect(()=>{
+    useEffect(() => {
         getallroles()
-    },[]);
+    }, []);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -45,6 +48,11 @@ const AddUser = ({ children }) => {
     const handleClose = () => {
         setOpen(false);
     };
+
+    function isValidEmail(email) {
+        return /\S+@\S+\.\S+/.test(email);
+    }
+
     const getallroles = async () => {
         await UserService.getAllRole().then((roleData) => {
             setRoleArray(roleData?.data)
@@ -62,7 +70,12 @@ const AddUser = ({ children }) => {
             role: role
         }
 
-        if(!name || !email || !phone || !password){
+        if (!name) { setNameErr(true) }
+        if (!email) { setEmailErr(true) }
+        if (!password) { setPassErr(true) }
+        if (!phone) { setPhoneErr(true) }
+
+        if (!name || !email || !phone || !password) {
             toast.error("Please fill all fields", {
                 position: "top-right",
                 autoClose: 5000,
@@ -73,7 +86,7 @@ const AddUser = ({ children }) => {
                 progress: undefined,
                 theme: "light",
             });
-        }else{
+        } else {
             await UserService.addUser(data).then(res => {
                 window.location.reload()
                 getAlluser();
@@ -87,8 +100,8 @@ const AddUser = ({ children }) => {
                         draggable: true,
                         progress: undefined,
                         theme: "light",
-                      });
-                      setOpen(false);
+                    });
+                    setOpen(false);
                 } else {
                     toast.error(res.data.message, {
                         position: "top-right",
@@ -149,9 +162,21 @@ const AddUser = ({ children }) => {
                                         }
                                     </NativeSelect>
                                 </FormControl>
-                                <TextField fullWidth label='Name' placeholder="Enter your name" onChange={(e) => { setName(e.target.value) }} />
-                                <TextField fullWidth label='Email' placeholder="Enter your email" onChange={(e) => { setEmail(e.target.value) }} />
-                                <TextField fullWidth label='Phone' placeholder="Enter your Phone" onChange={(e) => { setPhone(e.target.value) }} />
+                                <TextField fullWidth label='Name' placeholder="Enter your name" onChange={(e) => { setName(e.target.value) }} onKeyUp={() => { setNameErr(false) }} />
+                                {nameErr ? <span style={{ color: 'red' }}>Please fill Name </span> : ''}
+
+                                <TextField fullWidth label='Email' placeholder="Enter your email"
+                                    onChange={(e) => { setEmail(e.target.value); if (!isValidEmail(e.target.value)) { setValidEmailError('Email is invalid'); } else { setValidEmailError(null); } }}
+                                    onKeyUp={(e) => { setEmailErr(false); if (isValidEmail(e.target.value)) { setValidEmailError(null); } }} />
+                                {emailErr ? <span style={{ color: 'red' }}>Please fill valid email</span> : ''}
+                                {validEmailError ? <span style={{ color: 'red' }}>Invalid email</span> : ''}
+
+                                <TextField type="tel" error={isError} fullWidth label='Phone' placeholder="Enter your Phone"
+                                    onChange={(e) => { setPhone(e.target.value); if (e.target.value.length > 10) { setIsError(true); } }}
+                                    onKeyUp={(e) => { setPhoneErr(false); if (e.target.value.length === 10) { setIsError(false); } }} />
+                                {phoneErr ? <span style={{ color: 'red' }}>Please fill phone number</span> : ''}
+                                {isError ? <span style={{ color: 'red' }}>Phone number must be 10 digits</span> : ''}
+
                                 <TextField fullWidth label='Password' placeholder="Enter your password" onChange={(e) => { setPassword(e.target.value) }} />
                             </form>
                         </Paper>

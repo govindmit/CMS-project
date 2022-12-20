@@ -75,41 +75,40 @@ class userService {
     })
   }
 
-  createPageApi(data,token){
-    return http.post('/api/page/createpage',data,{
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-
-  }
-
-  getAllPages(token){
-    return http.get('api/page/getpages',{
+  createPageApi(data, token) {
+    return http.post('/api/page/createpage', data, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     })
   }
 
-  getOnePages(slug,token){
-    return http.get(`/api/page/slug/${slug}`,{
+  getAllPages() {
+    return http.get('api/page/getpages')
+  }
+
+  // getOnePages(slug, token) {
+  //   return http.get(`/api/page/slug/${slug}`, {
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`
+  //     }
+  //   })
+  // }
+
+  getOnePages(slug) {
+    return http.get(`/api/page/slug/${slug}`)
+  }
+  
+  updatePage(slug, token) {
+    return http.put(`api/page/updatepage/${slug}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     })
   }
 
-  updatePage(id,token){
-    return http.put(`api/page/updatepage/${id}`,{
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-  }
-
-  removePage(id,token){
-    return http.delete(`api/page/deletepage/${id}`,{
+  removePage(id, token) {
+    return http.delete(`api/page/deletepage/${id}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

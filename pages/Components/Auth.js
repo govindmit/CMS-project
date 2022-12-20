@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
@@ -10,62 +10,85 @@ import Signup from '../Components/SignUp/index'
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import { Avatar } from '@mui/material';
-import Navbar from '../Navbar';
+import { Avatar, ListItemButton } from '@mui/material';
 import Profile from './Profile';
+import UserService from '../../Service/UserService';
+import { Button, List, ListItem, ListItemText } from '@material-ui/core';
+import { useRouter } from 'next/router';
+
 
 const Auth = () => {
+    const route = useRouter()
+
     const [value, setValue] = useState('1');
     const [loginuser, setLoginUser] = useState()
-    const [loginUserImg, setLoginUserImg] = useState(); 
+    const [loginUserImg, setLoginUserImg] = useState();
+    const [pageArray, setPageArray] = useState([])
+
 
     useEffect(() => {
         const u = JSON.parse(localStorage.getItem('loginUser'));
         const pic = u?.pic
+        getPublishPages();
         setLoginUser(JSON.parse(localStorage.getItem('loginUser')));
         setLoginUserImg(pic)
-    }, [])
- 
+    }, []);
+
+    const getPublishPages = async () => {
+        const accestoken = localStorage.getItem('accessToken');
+        await UserService.getAllPages(accestoken).then(pages => {
+            setPageArray(pages.data)
+        })
+    }
+
 
     const paperStyle = { width: 400, margin: "20px auto" }
     const handleChange = (event, newValue) => {
         setValue(newValue);
-    };
+    }
+
+    const accountFn = async () => {
+       route.push('/')
+    }
+
+    const pageDEtailFn =(slug)=>{
+        localStorage.setItem('viewFlag',slug);
+     window.open(`/Editor/ViewPage/${slug}`);
+    }
 
     return (
         <div>
             <Box sx={{ flexGrow: 1 }}>
-
                 <AppBar position="static">
                     <Toolbar>
-                        <IconButton
-                            size="large"
-                            edge="start"
-                            color="inherit"
-                            aria-label="menu"
-                            sx={{ mr: 2 }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                            News
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}>
+                            CMS
                         </Typography>
+                        {pageArray? <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                            {pageArray?.map((item) => {
+                                if (item?.status === 'Published') {
+                                    return (
+                                        <Button key={item.name} sx={{ color: '#fff' }} onClick={()=>{pageDEtailFn(item.slug)}}>
+                                            {item.name}
+                                        </Button>
+                                    )
+                                }
+                            })}
+                        </Box>:''}
+                       
                         <Typography color="inherit">
-                            {
-                                loginuser ?
-
+                            {loginuser ?
                                     <Profile>
                                         <Avatar alt="Remy Sharp" ></Avatar>
                                     </Profile>
-                                    : 'Account'}
+                                    : <Button sx={{ color: '#fff' }} onClick={()=>{accountFn()}}>
+                                        Account
+                                    </Button>}
                         </Typography>
                     </Toolbar>
                 </AppBar>
             </Box>
-            {/* <Navbar/> */}
+
             <Paper elevation={20} style={paperStyle}>
                 <Box sx={{ width: '100%', typography: 'body1' }}>
                     <TabContext value={value}>

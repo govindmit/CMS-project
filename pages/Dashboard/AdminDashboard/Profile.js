@@ -26,6 +26,13 @@ export default function Profile() {
     const [email, setEmail] = useState();
     const [phone, setPhone] = useState();
 
+    const [nameErr, setNameErr] = useState(false);
+    const [emailErr, setEmailErr] = useState(false);
+    const [passErr, setPassErr] = useState(false);
+    const [phoneErr, setPhoneErr] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [validEmailError, setValidEmailError] = useState(null);
+
     const paperStyle = { padding: 20, width: 300, margin: "0 auto" }
     const avatarStyle = { backgroundColor: '#1bbd7e' }
 
@@ -36,6 +43,10 @@ export default function Profile() {
     const handleClose = () => {
         setOpen(false);
     };
+
+    function isValidEmail(email) {
+        return /\S+@\S+\.\S+/.test(email);
+    }
 
     useEffect(() => {
         setLoginuser(JSON.parse(localStorage.getItem('loginUser')));
@@ -66,27 +77,46 @@ export default function Profile() {
     const updateProfile = async () => {
         const u = JSON.parse(localStorage.getItem('loginUser'));
         const accestoken = localStorage.getItem('accessToken');
-        const data = {
-            name,
-            email,
-            phone,
-            role: roleValue
-        }
-        await UserService.updateprofile(u.id, data, accestoken).then(data => {
-            if (data.status === 200) {
-                toast.success(data.data.message, {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                });
-                myProfile()
+
+        if (!name) { setNameErr(true) }
+        if (!email) { setEmailErr(true) }
+        if (!phone) { setPhoneErr(true) }
+
+        if (!name || !email || !phone) {
+            toast.error("Please fill all fields", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        }else{
+            const data = {
+                name,
+                email,
+                phone,
+                role: roleValue
             }
-        })
+            await UserService.updateprofile(u.id, data, accestoken).then(data => {
+                if (data.status === 200) {
+                    toast.success(data.data.message, {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    setOpen(false);
+                    myProfile()
+                }
+            })
+        }
     }
     return (
         <div>
@@ -128,7 +158,7 @@ export default function Profile() {
                                     <InputLabel variant="standard" htmlFor="uncontrolled-native">
                                         Role
                                     </InputLabel>
-                                    <NativeSelect
+                                    <NativeSelect style={{ marginTop: '20px' }}
                                         defaultValue={roleValue}
                                         inputProps={{
                                             id: 'uncontrolled-native',
@@ -147,17 +177,30 @@ export default function Profile() {
 
                                     </NativeSelect>
                                 </FormControl>
-                                <TextField fullWidth label='Name' placeholder="Enter your name" defaultValue={name} onChange={(e) => { setName(e.target.value) }} />
-                                <TextField fullWidth label='Email' placeholder="Enter your email" defaultValue={email} onChange={(e) => { setEmail(e.target.value) }} />
-                                <TextField fullWidth label='Phone' placeholder="Enter your Phone" defaultValue={phone} onChange={(e) => { setPhone(e.target.value) }} />
-
+                                <TextField fullWidth label='Name' placeholder="Enter your name" style={{ marginTop: '20px' }} defaultValue={name} onChange={(e) => { setName(e.target.value) }} onKeyUp={() => { setNameErr(false)}} />
+                                {nameErr ? <span style={{ color: 'red' }}>Please fill Name </span> : ''}
+                                
+                                <TextField fullWidth label='Email' placeholder="Enter your email" style={{ marginTop: '20px' }} defaultValue={email} 
+                                onChange={(e) => { setEmail(e.target.value);if (!isValidEmail(e.target.value)) { setValidEmailError('Email is invalid');} else {setValidEmailError(null);} }}
+                                onKeyUp={(e) => { setEmailErr(false); if (isValidEmail(e.target.value)) {setValidEmailError(null); } }}
+                                />
+                                {emailErr ? <span style={{ color: 'red' }}>Please fill valid email</span> : ''}
+                                {validEmailError ? <span style={{ color: 'red' }}>Invalid email</span> : ''}
+                                
+                                {/* <TextField fullWidth label='Phone' placeholder="Enter your Phone" style={{ marginTop: '20px' }} defaultValue={phone} onChange={(e) => { setPhone(e.target.value) }} /> */}
+                                
+                                <TextField type="tel" error={isError} fullWidth label='Phone' placeholder="Enter your Phone" defaultValue={phone}
+                                    onChange={(e) => { setPhone(e.target.value); if (e.target.value.length > 10) { setIsError(true); } }}
+                                    onKeyUp={(e) => { setPhoneErr(false); if (e.target.value.length === 10) { setIsError(false); } }} />
+                                {phoneErr ? <span style={{ color: 'red' }}>Please fill phone number</span> : ''}
+                                {isError ? <span style={{ color: 'red' }}>Phone number must be 10 digits</span> : ''}
                             </form>
                         </Paper>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={() => { updateProfile(); handleClose() }}>Update</Button>
+                    <Button onClick={() => { updateProfile() }}>Update</Button>
                 </DialogActions>
             </Dialog>
         </div>

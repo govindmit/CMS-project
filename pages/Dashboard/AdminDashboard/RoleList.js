@@ -50,6 +50,10 @@ export default function RoleList() {
 
   const [roles, setRoles] = useState([]);
   const [description, setDescription] = useState();
+
+  const [titleErr, settitleErr] = useState(false);
+  const [descriptionErr, setDescriptionerr] = useState(false);
+
   const [roleValue, setRoleValue] = useState();
 
   var token;
@@ -63,10 +67,10 @@ export default function RoleList() {
   const handleClose = () => {
     setOpen(false);
   };
-  useEffect(() => {  
+  useEffect(() => {
     const u = JSON.parse(localStorage.getItem('loginUser'))
     getallRoles()
-},[!roles])
+  }, [!roles])
 
 
 
@@ -79,16 +83,82 @@ export default function RoleList() {
   }
 
   const addRole = async () => {
-    const accestoken = localStorage.getItem('accessToken');
-    const data = {
-      title: roleValue,
-      description: description
+
+    if (!roleValue) {
+      settitleErr(true)
+    }
+    if (!description) {
+      setDescriptionerr(true)
     }
 
-    await UserService.addRole(data, accestoken).then((data) => {
-      console.log("datatatat", data)
+    if (!roleValue) {
+      toast.error("Please fill all fields", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }else{
+      const accestoken = localStorage.getItem('accessToken');
+      const data = {
+        title: roleValue,
+        description: description
+      }
+      await UserService.addRole(data, accestoken).then((data) => {
+        console.log("datatatat", data)
+        if (data.status === 200) {
+          toast.success('Role added successFully', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          setOpen(false);
+          getallRoles()
+        } else {
+          toast.error(data.data.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        }
+      })
+    }
+    
+  }
+
+  // const handleSearch = async () => {
+  //   setLoading(true);
+  //   const config = {
+  //     headers: {
+  //       Authorization: `Bearer ${loginUser.token}`,
+  //     },
+  //   };
+
+  //   const { data } = await axios.get(`https://chat-application-call.herokuapp.com/api/user?search=${search}`, config);
+  //   setLoading(false);
+  //   setUsers(data)
+  // };
+
+
+  const removeFn = async (id) => {
+    const accestoken = localStorage.getItem('accessToken');
+    await UserService.deletRole(id, accestoken).then(data => {
       if (data.status === 200) {
-        toast.success('Role added successFully', {
+        toast.success(data.data.message, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -111,50 +181,6 @@ export default function RoleList() {
           theme: "light",
         });
       }
-    })
-  }
-
-  // const handleSearch = async () => {
-  //   setLoading(true);
-  //   const config = {
-  //     headers: {
-  //       Authorization: `Bearer ${loginUser.token}`,
-  //     },
-  //   };
-
-  //   const { data } = await axios.get(`https://chat-application-call.herokuapp.com/api/user?search=${search}`, config);
-  //   setLoading(false);
-  //   setUsers(data)
-  // };
-
-
-  const removeFn = async (id) => {
-    const accestoken = localStorage.getItem('accessToken');
-    await UserService.deletRole(id, accestoken).then(data => {
-     if(data.status === 200){
-      toast.success(data.data.message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      getallRoles()
-     }else{
-      toast.error(data.data.message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-     }
     })
   }
 
@@ -194,14 +220,16 @@ export default function RoleList() {
         <DialogContent>
           <Grid>
             <Paper style={paperStyle}>
-              <TextField fullWidth label='Title' placeholder="Enter title" onChange={(e) => setRoleValue(e.target.value)} />
-              <TextField fullWidth label='Description' placeholder="Enter description" onChange={(e) => { setDescription(e.target.value) }} />
+              <TextField fullWidth label='Title' placeholder="Enter title" onChange={(e) => setRoleValue(e.target.value)} onKeyUp={() => { settitleErr(false) }} />
+              {titleErr ? <span style={{ color: 'red' }}>Please fill Title </span> : ''}
+              <TextField fullWidth label='Description' placeholder="Enter description" onChange={(e) => { setDescription(e.target.value) }} onKeyUp={() => { setDescriptionerr(false) }}/>
+              {descriptionErr ? <span style={{ color: 'red' }}>Please fill Title </span> : ''}
             </Paper>
           </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={() => { addRole(); handleClose() }}>Add</Button>
+          <Button onClick={() => { addRole() }}>Add</Button>
         </DialogActions>
       </Dialog>
       {/* ------------------------------------------------ */}

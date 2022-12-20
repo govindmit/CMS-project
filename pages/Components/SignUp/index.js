@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Grid, Paper, Avatar, Typography, TextField, Button, NativeSelect, OutlinedInput, InputAdornment, IconButton, FilledInput, Input, } from '@material-ui/core'
 import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
-import FormControl from '@material-ui/core/FormControl';
 import UserService from '../../../Service/UserService';
 import InputLabel from '@mui/material/InputLabel';
 import { ToastContainer, toast } from 'react-toastify';
@@ -28,7 +27,8 @@ const Signup = () => {
     const [passErr, setPassErr] = useState(false);
     const [phoneErr, setPhoneErr] = useState(false);
     const [confirmPasErr, setConfirmPasErr] = useState(false);
-
+    const [isError, setIsError] = useState(false);
+    const [validEmailError, setValidEmailError] = useState(null);
 
     const nameRef = useRef(null);
     const emailRef = useRef(null);
@@ -74,6 +74,10 @@ const Signup = () => {
       const handleMouseDownPassword = (event) => {
         event.preventDefault();
       };
+
+      function isValidEmail(email) {
+        return /\S+@\S+\.\S+/.test(email);
+      }
 
     const signUpFn = async (e) => {
         e.preventDefault();
@@ -164,11 +168,18 @@ const Signup = () => {
                         <TextField fullWidth label='Name' placeholder="Enter your name" ref={nameRef} onChange={(e) => { setName(e.target.value) }} onKeyUp={() => { setNameErr(false) }} />
                         {nameErr ? <span style={{ color: 'red' }}>Please fill Name </span> : ''}
 
-                        <TextField fullWidth label='Email' placeholder="Enter your email" ref={emailRef} onChange={(e) => { setEmail(e.target.value) }} onKeyUp={() => { setEmailErr(false) }} />
+                        <TextField fullWidth label='Email' placeholder="Enter your email" ref={emailRef} 
+                        onChange={(e) => { setEmail(e.target.value);if (!isValidEmail(e.target.value)) { setValidEmailError('Email is invalid');} else {setValidEmailError(null);}  }} 
+                        onKeyUp={(e) => { setEmailErr(false) ;if (isValidEmail(e.target.value)) {setValidEmailError(null); }}} />
                         {emailErr ? <span style={{ color: 'red' }}>Please fill valid email</span> : ''}
+                        {validEmailError ? <span style={{ color: 'red' }}>Invalid email</span> : ''}
 
-                        <TextField fullWidth label='Phone' placeholder="Enter your Phone" ref={phoneRef} onChange={(e) => { setPhone(e.target.value) }} onKeyUp={() => { setPhoneErr(false) }} />
-                        {phoneErr ? <span style={{ color: 'red' }}>Please fill valid email</span> : ''}
+
+                        <TextField fullWidth label='Phone' placeholder="Enter your Phone" ref={phoneRef}
+                         onChange={(e) => { setPhone(e.target.value);if (e.target.value.length > 10) {setIsError(true);} }} 
+                         onKeyUp={(e) => { setPhoneErr(false); if (e.target.value.length === 10) {setIsError(false);} }} />
+                        { phoneErr ? <span style={{ color: 'red' }}>Please fill Phone number</span> : '' }
+                        { isError ? <span style={{ color: 'red' }}>Phone number must be 10 digits</span> : '' }
 
                         {/* <TextField fullWidth label='Passwordd' placeholder="Enter your password" ref={passwordRef} onChange={(e) => { setPassword(e.target.value) }} onKeyUp={()=>{setPassErr(false)}}/>
                         {passErr?<span style={{color:'red'}}>Please fill valid password</span>:''}
@@ -194,7 +205,6 @@ const Signup = () => {
                                 }
                             />
                         <Button type='submit' variant='contained' color='primary' style={{marginTop:'15px'}} onChange={(e) => { setConfirmPassword(e.target.value) }} onClick={(e) => { signUpFn(e) }}>Sign up</Button>
-
                     </form>
                 </Paper>
             </Grid>

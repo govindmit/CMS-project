@@ -9,7 +9,7 @@ const ViewPage = () => {
 
   const [html, setHtml] = useState('');
 
-
+  console.log("slug ===", slug)
   useEffect(() => {
     getPage()
   }, [])
@@ -18,10 +18,9 @@ const ViewPage = () => {
   const getPage = async () => {
     const accestoken = localStorage.getItem('accessToken');
     const slug = localStorage.getItem('viewFlag');
-    await UserService.getOnePages(slug, accestoken).then((data) => {
+    await UserService.getOnePages(slug).then((data) => {
       setHtml(data?.data?.html)
     })
-
   }
 
   const options = {
@@ -32,18 +31,10 @@ const ViewPage = () => {
       }
     },
   };
+ 
+  
   return parse(html, options);
 }
 
 export default ViewPage
 
-
-// import React from 'react'
-
-// const Viewpage = () => {
-//   return (
-//     <div>View page</div>
-//   )
-// }
-
-// export default Viewpage

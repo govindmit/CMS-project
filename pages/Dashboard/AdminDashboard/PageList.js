@@ -54,14 +54,13 @@ const PageList = () => {
             setPageArray(pagedata.data)
         })
     }
-    console.log("pageArray ====",pageArray)
+    console.log("pageArray ====", pageArray)
     const handleClickOpen = async () => {
         route.push('/Editor/RichTextEditor')
     }
 
-    const detailsFn = async (slug,status) => {
-        console.log("--------",slug)
-        if(status === 'UnPublished'){
+    const detailsFn = async (slug, status) => {
+        if (status === 'UnPublished') {
             toast.error("This page in unpublish , Can't view this page", {
                 position: "top-right",
                 autoClose: 5000,
@@ -71,10 +70,10 @@ const PageList = () => {
                 draggable: true,
                 progress: undefined,
                 theme: "light",
-              });
-        }else{
+            });
+        } else {
             // route.push(`/Editor/ViewPage/${slug}`);
-            localStorage.setItem('viewFlag',slug);
+            localStorage.setItem('viewFlag', slug);
             window.open(`/Editor/ViewPage/${slug}`);
         }
     }
@@ -85,57 +84,64 @@ const PageList = () => {
         const config = {
             headers: {
                 Authorization: `Bearer ${accestoken}`,
-            },  
+            },
         };
         // const { data } = await axios.get(`http://192.168.168.29:8080/api/page/getpages?search=${search}`, config);
         const { data } = await axios.get(` https://curious-veil-frog.cyclic.app/api/page/getpages?search=${search}`, config);
 
 
-       
+
         setLoading(false);
         setPageArray(data)
     };
 
-    const editPageFn = async (id) => {
-        route.push(`/Editor/EditTextEditor/${id}`)
-
+    const editPageFn = async (id, slug) => {
+        route.push(`/Editor/EditTextEditor/${slug}`)
         // route.push(`/Editor/EditPage/${id}`)
     }
 
     const removeFn = async (id) => {
         const accestoken = localStorage.getItem('accessToken');
         await UserService.removePage(id, accestoken).then((res) => {
-           if(res.status === 200){
-            toast.success(res.data.message, {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-              });
-              getAllPage();
-           }else{
-            toast.error('somthing went wrong to delete page', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-              });
-           }
+            if (res.status === 200) {
+                toast.success(res.data.message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                getAllPage();
+            } else {
+                toast.error('somthing went wrong to delete page', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            }
         })
     }
 
-  
+    const changeStatus =async(slug,status)=>{
+      const data = {
+        status:status
+      }
+      const accestoken = localStorage.getItem('accessToken');
+      UserService.updatePage(slug,)
+    }
+
+
     return (
         <div>
-            <ToastContainer/>
+            <ToastContainer />
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static" style={{ backgroundColor: 'Silver' }}>
                     <Toolbar>
@@ -168,9 +174,12 @@ const PageList = () => {
                             <StyledTableCell>Id</StyledTableCell>
                             <StyledTableCell>Name</StyledTableCell>
                             <StyledTableCell>Author</StyledTableCell>
-                            {/* <StyledTableCell>description</StyledTableCell> */}
                             <StyledTableCell>status</StyledTableCell>
-                            <StyledTableCell align="center-right">Actions</StyledTableCell>
+                            <StyledTableCell>Details</StyledTableCell>
+                            <StyledTableCell>Edit</StyledTableCell>
+                            <StyledTableCell>Remove</StyledTableCell>
+                            <StyledTableCell align="right">Change Status&nbsp;</StyledTableCell>
+
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -182,17 +191,24 @@ const PageList = () => {
                                     </StyledTableCell>
                                     <StyledTableCell>{row.name}</StyledTableCell>
                                     <StyledTableCell>{row.author.title}</StyledTableCell>
-
-                                    {/* <StyledTableCell>
-                                        {row.description}
-                                    </StyledTableCell> */}
                                     <StyledTableCell>{row.status}</StyledTableCell>
                                     <StyledTableCell>
-                                        <Button onClick={() => { detailsFn(row.slug,row.status) }}>view</Button>
-                                        <Button onClick={() => { editPageFn(row.id) }}>Edit</Button>
-                                        <Button onClick={() => { removeFn(row.id) }}>Remove</Button>
+                                        <Button onClick={() => { detailsFn(row.slug, row.status) }}>view</Button>
+                                    </StyledTableCell>
+                                    <StyledTableCell>
+                                        <Button style={{ backgroundColor: 'orange', color: "white" }} onClick={() => { editPageFn(row.id, row.slug) }}>Edit</Button>
+                                    </StyledTableCell>
+                                    <StyledTableCell>
+                                        <Button style={{ backgroundColor: 'red', color: "white" }} onClick={() => { removeFn(row.id) }}>Remove</Button>
+                                    </StyledTableCell>
+
+                                    <StyledTableCell align="right">
+                                        <Button style={{ backgroundColor: 'green', color: "white" }} onClick={()=>{changeStatus(row.slug,row.status === 'UnPublished' ? 'Published' : 'UnPublished')}} >
+                                            {row.status === 'UnPublished' ? 'Published' : 'UnPublished'}
+                                        </Button>
                                     </StyledTableCell>
                                 </StyledTableRow>
+
                             ))
                         }
                     </TableBody>

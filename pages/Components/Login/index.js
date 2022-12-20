@@ -30,7 +30,7 @@ const Login = ({ handleChange }) => {
     const [emailErr, setEmailErr] = useState(false);
     const [passErr, setPassErr] = useState(false);
 
-    const paperStyle = { padding: 20, height: '73vh', width: 300, margin: "0 auto" }
+    const paperStyle = { padding: 20,  width: 300, margin: "0 auto" }
     const avatarStyle = { backgroundColor: '#1bbd7e' }
     const btnstyle = { margin: '8px 0' }
 
@@ -73,15 +73,19 @@ const Login = ({ handleChange }) => {
                     localStorage.setItem("accessToken", res.data.accessToken)
                     localStorage.setItem("loginUser", JSON.stringify(user.data))
                     if (user.data.role.title === "Admin") {
-                        route.push('/Dashboard/AdminDashboard/admin')
+                        // route.push('/Dashboard/AdminDashboard/admin')
+                        window.location = '/Dashboard/AdminDashboard/admin'
                     }
                     else if (user.data.role.title === "Editor") {
-                        route.push('/Dashboard/EditorDashboard/editor')
+                        // route.push('/Dashboard/EditorDashboard/editor')
+                        window.location = '/Dashboard/EditorDashboard/editor'
                     }
                     else if (user.data.role.title === "Author") {
-                        route.push('/Dashboard/AuthorDashboard/Author')
+                        // route.push('/Dashboard/AuthorDashboard/Author')
+                        window.location = '/Dashboard/AuthorDashboard/Author'
                     } else if (user.data.role.title === "Subscriber") {
-                        route.push('/Dashboard/SubscriberDashboard/Subscribe')
+                        // route.push('/Dashboard/SubscriberDashboard/Subscribe')
+                        window.location = '/Dashboard/SubscriberDashboard/Subscribe'
                     }
                 } else {
                     toast.error('Login Failed ', {

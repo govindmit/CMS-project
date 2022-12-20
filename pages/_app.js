@@ -13,7 +13,7 @@ function MyApp({ Component, pageProps }) {
     setLoginUser(JSON.parse(localStorage.getItem('loginUser')));
     setViewFlag(localStorage.getItem('viewFlag'))
   }, []);
-
+  
   return (
     <React.StrictMode>
     <div>
