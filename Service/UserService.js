@@ -99,8 +99,8 @@ class userService {
     return http.get(`/api/page/slug/${slug}`)
   }
   
-  updatePage(slug, token) {
-    return http.put(`api/page/updatepage/${slug}`, {
+  updatePage(id, data,token) {
+    return http.put(`api/page/updatepage/${id}`, data,{
       headers: {
         'Authorization': `Bearer ${token}`
       }

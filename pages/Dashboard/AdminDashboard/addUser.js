@@ -7,7 +7,6 @@ import { Dialog, DialogActions, DialogContent } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-phone-number-input/style.css'
-import PhoneInput from 'react-phone-number-input'
 
 const AddUser = ({ children }) => {
     const [open, setOpen] = useState(false);
@@ -90,7 +89,7 @@ const AddUser = ({ children }) => {
             await UserService.addUser(data).then(res => {
                 window.location.reload()
                 getAlluser();
-                if (res.status === 201) {
+                if (res.status === 200) {
                     toast.success(res.data.message, {
                         position: "top-right",
                         autoClose: 5000,

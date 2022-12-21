@@ -130,12 +130,17 @@ const PageList = () => {
         })
     }
 
-    const changeStatus =async(slug,status)=>{
-      const data = {
-        status:status
-      }
-      const accestoken = localStorage.getItem('accessToken');
-      UserService.updatePage(slug,)
+    const changeStatus = async (id, status) => {
+        const data = {
+            status: status
+        }
+        const accestoken = localStorage.getItem('accessToken');
+        UserService.updatePage(id, data, accestoken).then((data) => {
+            console.log(data, "@@@@@@@")
+            if (data.status === 200) {
+                getAllPage()
+            }
+        })
     }
 
 
@@ -153,7 +158,7 @@ const PageList = () => {
                             sx={{ mr: 2 }}
                         >
                             <Input
-                                placeholder="Search by name or email"
+                                placeholder="Search by name or author"
                                 mr={2}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
@@ -175,7 +180,7 @@ const PageList = () => {
                             <StyledTableCell>Name</StyledTableCell>
                             <StyledTableCell>Author</StyledTableCell>
                             <StyledTableCell>status</StyledTableCell>
-                            <StyledTableCell>Details</StyledTableCell>
+                            {/* <StyledTableCell>Details</StyledTableCell> */}
                             <StyledTableCell>Edit</StyledTableCell>
                             <StyledTableCell>Remove</StyledTableCell>
                             <StyledTableCell align="right">Change Status&nbsp;</StyledTableCell>
@@ -192,9 +197,9 @@ const PageList = () => {
                                     <StyledTableCell>{row.name}</StyledTableCell>
                                     <StyledTableCell>{row.author.title}</StyledTableCell>
                                     <StyledTableCell>{row.status}</StyledTableCell>
-                                    <StyledTableCell>
+                                    {/* <StyledTableCell>
                                         <Button onClick={() => { detailsFn(row.slug, row.status) }}>view</Button>
-                                    </StyledTableCell>
+                                    </StyledTableCell> */}
                                     <StyledTableCell>
                                         <Button style={{ backgroundColor: 'orange', color: "white" }} onClick={() => { editPageFn(row.id, row.slug) }}>Edit</Button>
                                     </StyledTableCell>
@@ -203,7 +208,7 @@ const PageList = () => {
                                     </StyledTableCell>
 
                                     <StyledTableCell align="right">
-                                        <Button style={{ backgroundColor: 'green', color: "white" }} onClick={()=>{changeStatus(row.slug,row.status === 'UnPublished' ? 'Published' : 'UnPublished')}} >
+                                        <Button style={{ backgroundColor: 'green', color: "white" }} onClick={() => { changeStatus(row.id, row.status === 'UnPublished' ? 'Published' : 'UnPublished') }} >
                                             {row.status === 'UnPublished' ? 'Published' : 'UnPublished'}
                                         </Button>
                                     </StyledTableCell>
