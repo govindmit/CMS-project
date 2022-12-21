@@ -101,13 +101,14 @@ const EditPage = () => {
       })
     }
   }
+  console.log(';;;;;;;;;;',sampleDesign)
   
   const onDesignLoad = (data) => {
     console.log("onDesignLoad", data);
   };
   
   const onLoad = () => {
-    console.log(';;;;;;;;;;',sampleDesign)
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@',sampleDesign)
     emailEditorRef.current.editor.addEventListener(
       "onDesignLoad",
       onDesignLoad

@@ -86,10 +86,8 @@ const PageList = () => {
                 Authorization: `Bearer ${accestoken}`,
             },
         };
-        // const { data } = await axios.get(`http://192.168.168.29:8080/api/page/getpages?search=${search}`, config);
-        const { data } = await axios.get(` https://curious-veil-frog.cyclic.app/api/page/getpages?search=${search}`, config);
-
-
+        const { data } = await axios.get(`http://192.168.168.29:8080/api/page/getpages?search=${search}`, config);
+        // const { data } = await axios.get(` https://curious-veil-frog.cyclic.app/api/page/getpages?search=${search}`, config);
 
         setLoading(false);
         setPageArray(data)
