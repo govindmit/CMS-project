@@ -7,7 +7,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/router';
 import sample from "../sample.json";
 
-
 const EditPage = () => {
   var replaced
 
@@ -22,20 +21,19 @@ const EditPage = () => {
   const [sampleDesign, setSampleDesign] = useState({})
   const [pageId, setPageId] = useState('')
 
-  const [nameErr, setNameErr] = useState(false)
-  const [slugErr, setSlugErr] = useState(false)
-
+  const [nameErr, setNameErr] = useState(false);
+  const [slugErr, setSlugErr] = useState(false);
 
   const emailEditorRef = useRef(null);
   const { id } = router.query
 
   useEffect(() => {
+    getPage()
     const u = JSON.parse(localStorage.getItem('loginUser'));
     if (u.role.title === 'Author') {
       setStatus('UnPublished')
     }
     SetUser(u);
-    getPage()
   }, [])
 
   const exportHtml = async () => {
@@ -56,59 +54,63 @@ const EditPage = () => {
       setSampleDesign(data?.data?.design)
       setOnLoadData(data?.data)
       setData(data?.data?.html)
-
     })
   }
-  
-  const pageFn = async (html, design) => {
-    const s = await generateSlug(slug)
-    if (!name || !slug) {
-      toast.error("Please fill all fields", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      const accestoken = localStorage.getItem('accessToken');
-      const pagedata = {
-        name: name,
-        status: status,
-        slug: s,
-        html: html,
-        design: JSON.stringify(design)
-      }
 
-      await UserService.updatePage(pageId, pagedata, accestoken).then((res) => {
-        if (res.status === 200) {
-          toast.success(res.data.message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          })
-          // router.push('/Dashboard/AdminDashboard/PageList');
-          window.location = '/Dashboard/AdminDashboard/PageList'
+  const pageFn = async () => {
+
+    emailEditorRef.current.editor.exportHtml((data) => {
+      const { design, html } = data;
+
+      const s = generateSlug(slug)
+      if (!name || !slug) {
+        toast.error("Please fill all fields", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else {
+        const accestoken = localStorage.getItem('accessToken');
+        const pagedata = {
+          name: name,
+          status: status,
+          slug: s,
+          html: html,
+          design: JSON.stringify(design)
         }
-      })
-    }
+
+        UserService.updatePage(id, pagedata, accestoken).then((res) => {
+          if (res.status === 200) {
+            toast.success(res.data.message, {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            })
+            // router.push('/Dashboard/AdminDashboard/PageList');
+            window.location = '/Dashboard/AdminDashboard/PageList'
+          }
+        })
+      }
+    });
+
   }
-  console.log(';;;;;;;;;;',sampleDesign)
-  
+
   const onDesignLoad = (data) => {
     console.log("onDesignLoad", data);
   };
-  
+
   const onLoad = () => {
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@',sampleDesign)
+    console.log(".............",sampleDesign)
     emailEditorRef.current.editor.addEventListener(
       "onDesignLoad",
       onDesignLoad
@@ -119,7 +121,7 @@ const EditPage = () => {
   const onReady = () => {
     console.log('onReady');
   };
- 
+
   const generateSlug = async (str) => {
     str = str.replace(/^\s+|\s+$/g, ''); // trim
     str = str.toLowerCase();
@@ -144,12 +146,13 @@ const EditPage = () => {
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static" style={{ backgroundColor: 'Silver' }}>
           <Toolbar>
-            <Button onClick={() => { exportHtml() }}>Update Page</Button>
+            <Button onClick={() => { pageFn() }}>Update Page</Button>
           </Toolbar>
         </AppBar>
       </Box>
       <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch', marginTop: '25px' }, }} noValidate autoComplete="off">
-        <TextField id="outlined-basic" label="name" variant="outlined" defaultValue={name} onChange={(e) => { setName(e.target.value) }} />
+        <TextField id="outlined-basic" label="name" variant="outlined" defaultValue={name} onChange={(e) => { setName(e.target.value) }} onKeyUp={() => { setNameErr(false) }} />
+        {nameErr ? <span style={{ color: 'red' }}>Please fill Name </span> : ''}
 
         {user && user?.role?.title === 'Author' ? '' : <FormControl fullWidth>
           <InputLabel variant="standard" htmlFor="uncontrolled-native">
@@ -161,14 +164,13 @@ const EditPage = () => {
           </NativeSelect>
         </FormControl>}
 
-        <TextField id="standard-basic" label="slug" variant="outlined" defaultValue={slug} onChange={(e) => { setSlug(e.target.value) }} />
+        <TextField id="standard-basic" label="slug" variant="outlined" defaultValue={slug} onChange={(e) => { setSlug(e.target.value) }} onKeyUp={() => { setSlugErr(false) }} />
+        {slugErr ? <span style={{ color: 'red' }}>Please fill Name </span> : ''}
       </Box>
       <EmailEditor ref={emailEditorRef} onLoad={onLoad} onReady={onReady} />
     </div>
-
   );
 }
-
 
 export default EditPage
 

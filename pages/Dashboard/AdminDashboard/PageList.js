@@ -36,9 +36,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-
 const PageList = () => {
+
     const route = useRouter()
+
     const [pageArray, setPageArray] = useState([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(false);
@@ -54,7 +55,7 @@ const PageList = () => {
             setPageArray(pagedata.data)
         })
     }
-    console.log("pageArray ====", pageArray)
+
     const handleClickOpen = async () => {
         route.push('/Editor/RichTextEditor')
     }
@@ -134,7 +135,7 @@ const PageList = () => {
         }
         const accestoken = localStorage.getItem('accessToken');
         UserService.updatePage(id, data, accestoken).then((data) => {
-            console.log(data, "@@@@@@@")
+       
             if (data.status === 200) {
                 getAllPage()
             }
@@ -206,7 +207,7 @@ const PageList = () => {
                                     </StyledTableCell>
 
                                     <StyledTableCell align="right">
-                                        <Button style={{ backgroundColor: 'green', color: "white" }} onClick={() => { changeStatus(row.id, row.status === 'UnPublished' ? 'Published' : 'UnPublished') }} >
+                                        <Button style={{ backgroundColor: 'green', color: "white" }} onClick={() => { changeStatus(row.slug, row.status === 'UnPublished' ? 'Published' : 'UnPublished') }} >
                                             {row.status === 'UnPublished' ? 'Published' : 'UnPublished'}
                                         </Button>
                                     </StyledTableCell>

@@ -1,8 +1,11 @@
 import React from 'react'
+import PageList from '../AdminDashboard/PageList'
 
 const Editor = () => {
   return (
-    <div>Editor</div>
+    <div>
+      <PageList/>
+    </div>
   )
 }
 
